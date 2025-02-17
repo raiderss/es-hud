@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>es-hud</title>
+    <link rel="stylesheet" href="../assets/css/app.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/line-awesome/dist/line-awesome/css/line-awesome.min.css">
+</head>
+
+<div id="app" :style="{ display: ui ? 'block' : 'none' }">
+
+  <div class="status-container" 
+       :class="[containerClasses, getScaleClass]" 
+       :style="containerStyle">
+
+    <div class="status-group" :class="{ hidden: !primaryGroupVisible }">
+      <div class="status-row">
+        <div class="status-bar small" 
+             v-show="healthBarVisible"
+             :class="[barClasses, { hidden: !healthBarVisible }]" 
+             style="animation-delay: 0.1s">
+          <i class="status-bar__icon fas fa-heart" 
+             :class="iconClasses" 
+             :style="iconStyle" 
+             v-if="settings.Design.Icons.Show"></i>
+          <div class="status-bar__fill">
+            <div class="status-bar__fill-inner status-bar__fill-inner--health" 
+                 :style="{ width: stats.vitals.health + '%' }"></div>
+          </div>
+          <span class="status-bar__value" 
+                :class="valueClasses" 
+                :style="textStyle" 
+                v-if="settings.Design.Values.Show">
+            {{stats.vitals.health}}{{settings.Design.Values.ShowPercent ? '%' : ''}}
+          </span>
+        </div>
+
+        <div class="status-bar small" 
+             v-show="armorBarVisible"
+             :class="[barClasses, { hidden: !armorBarVisible }]" 
+             style="animation-delay: 0.2s">
+          <i class="status-bar__icon fas fa-shield-halved" 
+             :class="iconClasses" 
+             :style="iconStyle" 
+             v-if="settings.Design.Icons.Show"></i>
+          <div class="status-bar__fill">
+            <div class="status-bar__fill-inner status-bar__fill-inner--armor" 
+                 :style="{ width: stats.vitals.armor + '%' }"></div>
+          </div>
+          <span class="status-bar__value" 
+                :class="valueClasses" 
+                :style="textStyle" 
+                v-if="settings.Design.Values.Show">
+            {{stats.vitals.armor}}{{settings.Design.Values.ShowPercent ? '%' : ''}}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-group secondary" :class="{ hidden: !secondaryGroupVisible }">
+      <div class="status-row">
+        <div class="status-bar small" 
+             v-show="foodBarVisible"
+             :class="[barClasses, { hidden: !foodBarVisible }]" 
+             style="animation-delay: 0.3s">
+          <i class="status-bar__icon fas fa-drumstick-bite" 
+             :class="iconClasses" 
+             :style="iconStyle" 
+             v-if="settings.Design.Icons.Show"></i>
+          <div class="status-bar__fill">
+            <div class="status-bar__fill-inner status-bar__fill-inner--food" 
+                 :style="{ width: Math.min(stats.vitals.food, 100) + '%' }"></div>
+          </div>
+          <span class="status-bar__value" 
+                :class="valueClasses" 
+                :style="textStyle" 
+                v-if="settings.Design.Values.Show">
+            {{Math.min(stats.vitals.food, 100)}}{{settings.Design.Values.ShowPercent ? '%' : ''}}
+          </span>
+        </div>
+
+
+        <div class="status-bar small" 
+             v-show="waterBarVisible"
+             :class="[barClasses, { hidden: !waterBarVisible }]" 
+             style="animation-delay: 0.4s">
+          <i class="status-bar__icon fas fa-droplet" 
+             :class="iconClasses" 
+             :style="iconStyle" 
+             v-if="settings.Design.Icons.Show"></i>
+          <div class="status-bar__fill">
+            <div class="status-bar__fill-inner status-bar__fill-inner--water" 
+                 :style="{ width: Math.min(stats.vitals.water, 100) + '%' }"></div>
+          </div>
+          <span class="status-bar__value" 
+                :class="valueClasses" 
+                :style="textStyle" 
+                v-if="settings.Design.Values.Show">
+            {{Math.min(stats.vitals.water, 100)}}{{settings.Design.Values.ShowPercent ? '%' : ''}}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-group secondary" :class="{ hidden: !tertiaryGroupVisible }">
+      <div class="status-row">
+        <div class="status-bar small" 
+             v-show="oxygenBarVisible"
+             :class="[barClasses, { hidden: !oxygenBarVisible }]" 
+             style="animation-delay: 0.5s">
+          <i class="status-bar__icon fas fa-lungs" 
+             :class="iconClasses" 
+             :style="iconStyle" 
+             v-if="settings.Design.Icons.Show"></i>
+          <div class="status-bar__fill">
+            <div class="status-bar__fill-inner status-bar__fill-inner--oxygen" 
+                 :style="{ width: stats.vitals.oxygen + '%' }"></div>
+          </div>
+          <span class="status-bar__value" 
+                :class="valueClasses" 
+                :style="textStyle" 
+                v-if="settings.Design.Values.Show">
+            {{stats.vitals.oxygen}}{{settings.Design.Values.ShowPercent ? '%' : ''}}
+          </span>
+        </div>
+
+        <div class="status-bar small" 
+             v-show="staminaBarVisible"
+             :class="[barClasses, { hidden: !staminaBarVisible }]" 
+             style="animation-delay: 0.6s">
+          <i class="status-bar__icon fas fa-bolt" 
+             :class="iconClasses" 
+             :style="iconStyle" 
+             v-if="settings.Design.Icons.Show"></i>
+          <div class="status-bar__fill">
+            <div class="status-bar__fill-inner status-bar__fill-inner--stamina" 
+                 :style="{ width: stats.vitals.stamina + '%' }"></div>
+          </div>
+          <span class="status-bar__value" 
+                :class="valueClasses" 
+                :style="textStyle" 
+                v-if="settings.Design.Values.Show">
+            {{stats.vitals.stamina}}{{settings.Design.Values.ShowPercent ? '%' : ''}}
+          </span>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="top-right-info">
+      <div class="server-logo">
+        <img :src="serverInfo.logo" alt="Server Logo">
+      </div>
+
+      <div class="info-container">
+        <div class="info-card">
+          <i class="fas fa-id-card info-card__icon"></i>
+          <span class="info-card__text">ID</span>
+          <span class="info-card__value">{{ playerInfo.id }}</span>
+        </div>
+
+        <div class="info-card">
+          <i class="fas fa-briefcase info-card__icon"></i>
+          <span class="info-card__value">{{ playerInfo.grade }}</span>
+        </div>
+
+        <div class="info-card">
+          <i class="fas fa-wallet info-card__icon"></i>
+          <span class="info-card__value">${{ formatMoney(playerInfo.cash) }}</span>
+        </div>
+
+        <div class="info-card">
+          <i class="fas fa-university info-card__icon"></i>
+          <span class="info-card__value">${{ formatMoney(playerInfo.bank) }}</span>
+        </div>
+
+        <div class="discord-wrapper">
+          <div class="discord-card" @click="openDiscord">
+            <i class="fab fa-discord"></i>
+            <span>{{ serverInfo.discord }}</span>
+          </div>
+          <div class="discord-promo">
+            <i class="fas fa-link discord-promo__icon"></i>
+            <div class="discord-promo__text">
+              <span>EkwWvFS</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    
+  </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<script src="./assets/data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<script src="./vue.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+</body>
+
+</html>
