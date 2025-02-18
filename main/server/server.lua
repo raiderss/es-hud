@@ -29,7 +29,7 @@ local function GetPlayerInfo(xPlayer)
 end
 
 Citizen.CreateThread(function()
-        Citizen.Wait(200) 
+        Citizen.Wait(500) 
         for _, playerId in pairs(GetPlayers()) do
             local Player = Config.Framework == "ESX" or Config.Framework == "NewESX" 
                 and Framework.GetPlayerFromId 
