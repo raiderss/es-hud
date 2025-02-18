@@ -43,7 +43,6 @@ Citizen.CreateThread(function()
         end
 end)
 
--- Para değişiklikleri için eventler (ESX)
 if Config.Framework == "ESX" or Config.Framework == "NewESX" then
     RegisterServerEvent('esx:onAddAccountMoney')
     AddEventHandler('esx:onAddAccountMoney', function(source, account, money)
@@ -67,7 +66,6 @@ if Config.Framework == "ESX" or Config.Framework == "NewESX" then
         end
     end)
 
-    -- Nakit para değişikliği
     RegisterServerEvent('esx:onAddInventoryItem')
     AddEventHandler('esx:onAddInventoryItem', function(source, item, count)
         if item == 'money' then
@@ -82,7 +80,6 @@ if Config.Framework == "ESX" or Config.Framework == "NewESX" then
     end)
 end
 
--- Para değişiklikleri için eventler (QBCore)
 if Config.Framework == "QBCore" then
     RegisterServerEvent('QBCore:Server:OnMoneyChange')
     AddEventHandler('QBCore:Server:OnMoneyChange', function(source, moneytype, amount, type)
@@ -96,7 +93,6 @@ if Config.Framework == "QBCore" then
     end)
 end
 
--- Meslek değişiklikleri için eventler
 RegisterServerEvent('QBCore:Server:OnJobUpdate')
 AddEventHandler('QBCore:Server:OnJobUpdate', function(source, job)
     local xPlayer = Framework.Functions.GetPlayer(source)
@@ -119,11 +115,10 @@ AddEventHandler('esx:setJob', function(source, job)
     end
 end)
 
--- Oyuncu yüklendiğinde
 RegisterNetEvent('esx:playerLoaded')
 AddEventHandler('esx:playerLoaded', function()
     local source = source
-    Wait(1000) -- Oyuncu verilerinin tam yüklenmesi için biraz bekle
+    Wait(1000) 
     local xPlayer = Framework.GetPlayerFromId(source)
     if xPlayer then
         local playerInfo = GetPlayerInfo(xPlayer)
@@ -136,7 +131,7 @@ end)
 RegisterNetEvent('QBCore:Server:OnPlayerLoaded')
 AddEventHandler('QBCore:Server:OnPlayerLoaded', function()
     local source = source
-    Wait(1000) -- Oyuncu verilerinin tam yüklenmesi için biraz bekle
+    Wait(1000) 
     local xPlayer = Framework.Functions.GetPlayer(source)
     if xPlayer then
         local playerInfo = GetPlayerInfo(xPlayer)
